@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <connectionStrings>
+    <add name="TouristGuideDBEntities" connectionString="metadata=res://*/;provider=System.Data.SqlClient;provider connection string=&quot;Data Source=clea.mic.psnc.pl;Initial Catalog=pm.studentlive.pl;User ID=pm;Password=PASSHERE;MultipleActiveResultSets=True&quot;" providerName="System.Data.EntityClient" />
+  </connectionStrings>
+</configuration>
