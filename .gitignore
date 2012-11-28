@@ -107,7 +107,10 @@ UpgradeLog*
 
 
 #CONFIG FILES
-web.config
-Web.Debug.config
-Web.Release.config
+TouristGuide/web.config
+TouristGuide/Web.Debug.config
+TouristGuide/Web.Release.config
+TouristGuide.Service/web.config
+TouristGuide.Service/Web.Debug.config
+TouristGuide.Service/Web.Release.config
 TouristGuide.Providers/App.Config
