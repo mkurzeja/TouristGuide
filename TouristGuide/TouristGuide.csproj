@@ -469,12 +469,12 @@
     <None Include="Content\fonts\SegoeWPN-Semibold.ttf" />
     <None Include="Content\fonts\SegoeWPN-Semilight.ttf" />
     <None Include="Content\fonts\SegoeWPN.ttf" />
-    <Content Include="Views\MyAttraction\AttractionsList.cshtml" />
     <Content Include="Views\Home\Map.cshtml" />
     <Content Include="Views\AttractionsList\Index.cshtml" />
     <Content Include="Views\UserLists\Index.cshtml" />
     <Content Include="Views\UserLists\Create.cshtml" />
     <Content Include="Views\AttractionsList\NewAttraction.cshtml" />
+    <Content Include="Views\MyAttraction\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
