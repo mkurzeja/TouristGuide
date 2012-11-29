@@ -52,25 +52,17 @@ namespace TouristGuide.Controllers
             var id = users.GetUserByLogin(HttpContext.User.Identity.Name).UserId;
             u.UserId = id;
             db.UserLists.Add(u);
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbEntityValidationException e)
-            {
-                foreach (var eve in e.EntityValidationErrors)
-                {
-                    Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-                            ve.PropertyName, ve.ErrorMessage);
-                    }
-                }
+            db.SaveChanges();
             
-            }
             return RedirectToAction("Index");
+        }
+        public String updateName(int id, String name)
+        {
+            UserList us = db.UserLists.Where(x => x.ID == id).Single();
+            us.Name = name;
+            db.Entry(us).State = System.Data.EntityState.Modified;
+            db.SaveChanges();
+            return "ok";
         }
     }
 }

@@ -3,7 +3,7 @@
 @{
     
     
-    ViewBag.Title = "Attractions List";
+    ViewBag.Title = ViewBag.ListName;
 }
 
 
@@ -16,10 +16,10 @@ else
     <table>
     @{int i = 0; }
     @foreach (var item in Model) {
-        <tr>
+         <tr style="height:20px; font-size:medium">
             @{i = i + 1;}
             <td>@i</td>
-           <td>@Html.ActionLink(item.Name,"Details", "Attraction", new {id = item.ID},null)</td> 
+           <td style="text-align:left">@Html.ActionLink(item.Name,"Details", "Attraction", new {id = item.ID},null)</td> 
            <td> @Html.ActionLink(" ", "Delete", new { id=item.ID } , new { @class = "imgLinkDelete", })</td> 
       </tr>    
     }

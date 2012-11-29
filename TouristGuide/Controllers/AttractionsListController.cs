@@ -22,7 +22,7 @@ namespace TouristGuide.Controllers
             var attractionsLists = db.AttractionsLists.Where(x => x.ListId == id).Select(x => x.AttractionId).ToList();
             var attractions = db.Attraction.Where(x => attractionsLists.Contains(x.ID)).ToList();
             Session["ListId"] = id;
-            
+            ViewBag.ListName = db.UserLists.Where(x => x.ID == id).Select(x => x.Name).Single();
             return View(attractions);
 
         }
