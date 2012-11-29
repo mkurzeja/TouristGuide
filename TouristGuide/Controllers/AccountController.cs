@@ -32,6 +32,7 @@ namespace TouristGuide.Controllers
         public ActionResult Index()
         {
             var users = Membership.GetAllUsers();
+
             ViewBag.roles = getRolesToList();
             return View(users);
         }

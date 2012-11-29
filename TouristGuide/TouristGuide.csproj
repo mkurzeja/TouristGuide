@@ -25,6 +25,10 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>4.0</OldToolsVersion>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -137,12 +141,14 @@
   <ItemGroup>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AttractionController.cs" />
+    <Compile Include="Controllers\AttractionsListController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\GenerateController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MyAttractionController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
     <Compile Include="Controllers\PlaceController.cs" />
+    <Compile Include="Controllers\UserListsController.cs" />
     <Compile Include="Controllers\WebServiceController.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Global.asax.cs">
@@ -154,6 +160,7 @@
     <Compile Include="Models\Attraction.cs" />
     <Compile Include="Models\AttractionEditViewModel.cs" />
     <Compile Include="Models\AttractionImage.cs" />
+    <Compile Include="Models\AttractionsList.cs" />
     <Compile Include="Models\AttractionType.cs" />
     <Compile Include="Models\AttractionReview.cs" />
     <Compile Include="Models\AttractionViewModel.cs" />
@@ -167,6 +174,7 @@
     <Compile Include="Models\TouristGuideDB.cs" />
     <Compile Include="Models\News.cs" />
     <Compile Include="Models\NewsTimeViewModel.cs" />
+    <Compile Include="Models\UserList.cs" />
     <Compile Include="Models\UserRoleViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -461,8 +469,12 @@
     <None Include="Content\fonts\SegoeWPN-Semibold.ttf" />
     <None Include="Content\fonts\SegoeWPN-Semilight.ttf" />
     <None Include="Content\fonts\SegoeWPN.ttf" />
-    <Content Include="Views\MyAttraction\Index.cshtml" />
+    <Content Include="Views\MyAttraction\AttractionsList.cshtml" />
     <Content Include="Views\Home\Map.cshtml" />
+    <Content Include="Views\AttractionsList\Index.cshtml" />
+    <Content Include="Views\UserLists\Index.cshtml" />
+    <Content Include="Views\UserLists\Create.cshtml" />
+    <Content Include="Views\AttractionsList\NewAttraction.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,0 +1,14 @@
+﻿@{
+    ViewBag.Title = "New Attraction";
+
+}
+@model IEnumerable<TouristGuide.Models.Attraction>
+@using (Html.BeginForm("AddNewAttraction", "AttractionsList"))
+{
+    <fieldset>
+        <legend>Attraction:</legend>
+        @Html.DropDownList("Attractions", new SelectList(Model,"ID","Name"))
+        <input type="submit" value="Add" />
+    </fieldset>
+}
+@Html.ActionLink(" ", "Index", "UserLists", null, new { @class = "imgBack", })

@@ -1,0 +1,40 @@
+﻿@model IEnumerable<TouristGuide.Models.UserList>
+
+@{
+    
+    
+    ViewBag.Title = "User Attractions Lists";
+}
+
+
+@if (Model == null)
+{
+    <text>You don't have any attraction list</text>
+}
+else
+{ 
+    <table>
+    @{int i = 0; }
+    @foreach (var item in Model)
+    {
+        <tr>
+            @{i = i + 1;}
+            <td>@i</td>
+            <td style="text-align:left">@Html.ActionLink(item.Name, "Show", new { idd = item.ID }) </td>
+            <td>@Html.ActionLink(" ", "Delete", new { id=item.ID } , new { @class = "imgLinkDelete" })</td>
+        </tr>
+
+    }
+         <tr>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td><td></td>
+            <td>
+                 @Html.ActionLink(" ", "Create", null, new { @class = "imgNew" })
+            </td>
+        </tr>
+        </table>
+}
+

@@ -1,0 +1,20 @@
+﻿@model TouristGuide.Models.UserList
+
+@{
+    
+    ViewBag.Title = "New List";
+  
+}
+
+@using (Html.BeginForm("AddList", "UserLists"))
+{
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>New List:</legend>
+        @Html.LabelFor(model => model.Name)
+        @Html.EditorFor(model => model.Name)
+        @Html.ValidationMessageFor(model => model.Name)
+        <input type="submit" value="Create" />
+    </fieldset>
+}
+@Html.ActionLink(" ", "Index", "UserLists", null, new { @class = "imgBack", })
