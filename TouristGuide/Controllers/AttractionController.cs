@@ -100,7 +100,7 @@ namespace TouristGuide.Controllers
             var attraction = db.Attraction.Include(i => i.Images).Include(a => a.Address).Include(c => c.Coordinates)
                 .Include(c => c.Country).Include(c => c.AttractionType).Where(a => a.ID == id).SingleOrDefault();
 
-            ViewData["Reviews"] = db.AttractionReview.Where(a => a.AttractionID == id).OrderByDescending(x => x.Date)
+            ViewData["Reviews"] = db.AttractionReview.Where(a => a.AttractionID == id && a.isApproved == 1).OrderByDescending(x => x.Date)
                 .Take(num).ToList();
             return View(attraction);
         }

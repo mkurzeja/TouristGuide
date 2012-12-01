@@ -8,7 +8,7 @@
     <p>
         <b>Rating: </b>@Model.Rating</p>
     <p>@Model.Text</p>
-    @if (Request.IsAuthenticated && HttpContext.Current.User.IsInRole("admin") || HttpContext.Current.User.Identity.Name == Model.Author)
+    @if (Request.IsAuthenticated && HttpContext.Current.User.IsInRole("admin") || HttpContext.Current.User.IsInRole("moderator") || HttpContext.Current.User.Identity.Name == Model.Author)
     {
         <p>
             @Html.ActionLink("Edit", "ReviewEdit", new { id = Model.ID }) |

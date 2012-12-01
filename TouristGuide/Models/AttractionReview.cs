@@ -13,6 +13,8 @@ namespace TouristGuide.Models
         public string Author { get; set; }
         public DateTime Date { get; set; }
 
+        public Byte isApproved { get; set; }
+
         [Required]
         [Range(1,10)]
         public int Rating { get; set; }

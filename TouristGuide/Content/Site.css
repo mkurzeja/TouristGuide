@@ -741,8 +741,8 @@ font-family:Segoe WP Semibold;
 
 #logInTile
 {
-     width: 310px;
-    height: 310px;
+    width: 310px;
+    #height: 310px;
     background-image: url(images/tileDarker.png);
     margin-right: 5px;
     margin-left: 5px;

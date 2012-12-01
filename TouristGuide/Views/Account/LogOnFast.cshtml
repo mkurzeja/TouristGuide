@@ -20,6 +20,12 @@
                 <div style="border-bottom: 1px solid; font-size: 18px; margin-bottom: 5px;">Wall<br/></div>   
                 @Html.ActionLink("Favourite Attractions", "Index", "MyAttraction") <br />
                 @Html.ActionLink("Attractions Lists", "Index", "UserLists")
+                @if (Request.IsAuthenticated && (HttpContext.Current.User.IsInRole("admin") || HttpContext.Current.User.IsInRole("moderator ")))
+                {
+                    <br/><br />
+                    <div style="border-bottom: 1px solid; font-size: 18px; margin-bottom: 5px;">Reviews<br/></div>   
+                    @Html.ActionLink("Unapproved Reviews", "Index", "UnApprovedReview") 
+                }
             </span>
         </fieldset>
     </div>

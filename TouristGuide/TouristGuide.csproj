@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\UnApprovedReviewController.cs" />
     <Compile Include="Controllers\AttractionController.cs" />
     <Compile Include="Controllers\AttractionsListController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
@@ -475,6 +476,7 @@
     <Content Include="Views\UserLists\Create.cshtml" />
     <Content Include="Views\AttractionsList\NewAttraction.cshtml" />
     <Content Include="Views\MyAttraction\Index.cshtml" />
+    <Content Include="Views\UnApprovedReview\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

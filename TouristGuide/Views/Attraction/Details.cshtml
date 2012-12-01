@@ -34,7 +34,7 @@
     function ResultReview(data) {
         if (data != null && data.trim() != '') {
             $("#addreview").toggle();
-            $('#showreview').after(data);
+            $('#showreview').after("<br/><p style='color:red'>Your review must be approved.</p>");
             $("#Text").val("");
             $("#Rating").val("");
         }
