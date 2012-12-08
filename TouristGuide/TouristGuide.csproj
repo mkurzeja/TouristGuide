@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ShortestPathController.cs" />
     <Compile Include="Controllers\UnApprovedReviewController.cs" />
     <Compile Include="Controllers\AttractionController.cs" />
     <Compile Include="Controllers\AttractionsListController.cs" />
@@ -157,6 +158,7 @@
     </Compile>
     <Compile Include="Helpers\CustomHelpers.cs" />
     <Compile Include="Helpers\DbHelpers.cs" />
+    <Compile Include="Helpers\Greedy.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\Attraction.cs" />
     <Compile Include="Models\AttractionEditViewModel.cs" />

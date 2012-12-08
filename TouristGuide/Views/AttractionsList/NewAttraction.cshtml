@@ -9,6 +9,7 @@
         <legend>Attraction:</legend>
         @Html.DropDownList("Attractions", new SelectList(Model,"ID","Name"))
         <input type="submit" value="Add" />
+        <input type="hidden" name="list" value=" @ViewBag.listID"/>
     </fieldset>
 }
-@Html.ActionLink(" ", "Index", "UserLists", null, new { @class = "imgBack", })
+@Html.ActionLink(" ", "Index", "AttractionsList", new {id = @ViewBag.listID}, new { @class = "imgBack", })
