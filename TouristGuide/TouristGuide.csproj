@@ -156,9 +156,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\CheckTokkenFilterAttribute.cs" />
     <Compile Include="Helpers\CustomHelpers.cs" />
     <Compile Include="Helpers\DbHelpers.cs" />
     <Compile Include="Helpers\Greedy.cs" />
+    <Compile Include="Helpers\HashHelper.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\Attraction.cs" />
     <Compile Include="Models\AttractionEditViewModel.cs" />
@@ -179,6 +181,7 @@
     <Compile Include="Models\NewsTimeViewModel.cs" />
     <Compile Include="Models\UserList.cs" />
     <Compile Include="Models\UserRoleViewModel.cs" />
+    <Compile Include="Models\UserTokkens.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

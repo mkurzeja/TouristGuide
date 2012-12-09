@@ -10,6 +10,7 @@ using System.Web.Services;
 using System.Text.RegularExpressions;
 using System.Web.Security;
 using TouristGuide.Providers.Database;
+using TouristGuide.Helpers;
 
 namespace TouristGuide.Controllers
 { 
@@ -241,21 +242,33 @@ namespace TouristGuide.Controllers
         [WebMethod]
         public JsonResult MobileLogOn(string user, string pass)
         {
-            int userId;
+            String tokken = "";
+
             if (Membership.ValidateUser(user, pass))
             {
-                userId = users.GetUserByLogin(user).UserId;
+                var id = users.GetUserByLogin(user).UserId;
+                tokken = HashHelper.CalculateMD5Hash(id.ToString() + DateTime.Now.Ticks.ToString());
+                var el = new UserTokken() { Tokken = tokken, UserId = id, LastAccessTime = DateTime.Now };
+
+                var del = db.UserTokkens.SingleOrDefault(x=>x.UserId==id);
+                if (del != null)
+                    db.UserTokkens.Remove(del);
+
+                db.UserTokkens.Add(el);
+                db.SaveChanges();
             }
             else
             {
-                userId = -1;
+                tokken = "error";
             }
-            return Json(userId, JsonRequestBehavior.AllowGet);
+
+            return Json(tokken, JsonRequestBehavior.AllowGet);
         }
 
         // GET: /WebService/GetFavourites
         [WebMethod]
-        public JsonResult GetFavourites(int userId)
+        [CheckTokkenFilter]
+        public JsonResult GetFavourites(string tokken, int userId = 0)
         {
             var myAttractions = db.MyAttractions.Where(x => x.UserId == userId).Select(x => x.AttractionId).ToList();
             var attractions = db.Attraction.Where(x => myAttractions.Contains(x.ID));

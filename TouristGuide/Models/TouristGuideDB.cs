@@ -21,5 +21,6 @@ namespace TouristGuide.Models
         public DbSet<MyAttraction> MyAttractions { get; set; }
         public DbSet<AttractionsList> AttractionsLists { get; set; }
         public DbSet<UserList> UserLists { get; set; }
+        public DbSet<UserTokken> UserTokkens { get; set; }
     }
 }
