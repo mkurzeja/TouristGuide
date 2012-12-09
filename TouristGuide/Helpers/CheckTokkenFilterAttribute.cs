@@ -21,7 +21,9 @@ namespace TouristGuide.Helpers
 
                 if (res != null && DateTime.Now <= res.LastAccessTime.AddMinutes(sessionTime))
                 {
-                    filterContext.ActionParameters["userId"] = res.UserId;
+                    if (filterContext.ActionParameters.ContainsKey("userId"))
+                        filterContext.ActionParameters["userId"] = res.UserId;
+
                     res.LastAccessTime = DateTime.Now;
                     db.SaveChanges();                       
                     base.OnActionExecuting(filterContext);

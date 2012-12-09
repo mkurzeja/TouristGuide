@@ -275,6 +275,32 @@ namespace TouristGuide.Controllers
             return Json(new { attractions = attractions.ToList() }, JsonRequestBehavior.AllowGet);
         }
 
+        // GET: /WebService/UserAttractionLists
+        [WebMethod]
+        [CheckTokkenFilter]
+        public JsonResult GetUserAttractionLists(string tokken, int userId = 0)
+        {
+            var userlists = db.UserLists.Where(x => x.UserId == userId).ToList();
+            return Json(new { attractionLists = userlists }, JsonRequestBehavior.AllowGet);
+        }
+
+        // GET: /WebService/AttractionsByUserList
+        [WebMethod]
+        [CheckTokkenFilter]
+        public JsonResult GetAttractionsByUserList(string tokken, int listId, int userId = 0)
+        {
+            var list = db.UserLists.SingleOrDefault(x => x.UserId == userId && x.ID == listId);
+
+            if(list==null)
+                return Json(null, JsonRequestBehavior.AllowGet);
+
+            var attractionsIds = db.AttractionsLists.Where(x => x.ListId == listId).Select(x=>x.AttractionId).ToList();
+            var attractions = db.Attraction.Include(c => c.Country).Include(a => a.Address).
+                Where(x => attractionsIds.Contains(x.ID)).ToList();
+            attractions.ForEach(x => x.Description = Regex.Replace(x.Description, @"<.*?>", string.Empty));
+            return Json(new { attractions = attractions }, JsonRequestBehavior.AllowGet);
+        }
+
         protected override void Dispose(bool disposing)
         {
             db.Dispose();
