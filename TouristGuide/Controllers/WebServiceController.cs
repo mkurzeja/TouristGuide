@@ -11,6 +11,8 @@ using System.Text.RegularExpressions;
 using System.Web.Security;
 using TouristGuide.Providers.Database;
 using TouristGuide.Helpers;
+using System.IO;
+using System.Drawing;
 
 namespace TouristGuide.Controllers
 { 
@@ -301,6 +303,35 @@ namespace TouristGuide.Controllers
             return Json(new { attractions = attractions }, JsonRequestBehavior.AllowGet);
         }
 
+        // GET: /WebService/AttractionsByUserList
+        [WebMethod]
+        [CheckTokkenFilter]
+        public void AddPhotoToAttraction(string tokken, int attrId, byte[] image = null, int userId = 0)
+        {
+            //check user role for permission??
+
+            MemoryStream ms = new MemoryStream(image);
+            Bitmap bitmap = new Bitmap(ms);
+            var name = HashHelper.CalculateMD5Hash(new Guid().ToString());
+            String path = HttpContext.Server.MapPath("~/Content/AttractionImages");
+            bitmap.Save(path+"/"+name+".jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
+
+            var ati = new AttractionImage() { AttractionID = attrId, FileName = name + ".jpg" };
+            db.AttractionImage.Add(ati);
+            db.SaveChanges();
+        }
+
+        // GET: /WebService/AttractionsByUserList
+        //[WebMethod]
+        //public JsonResult GetPhoto()
+        //{
+        //    String path = HttpContext.Server.MapPath("~/Content/images");
+        //    Bitmap bt = new Bitmap(path + "/404.jpg");
+        //    MemoryStream ms = new MemoryStream();
+        //    bt.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+        //    return Json(new { photo = ms.ToArray() }, JsonRequestBehavior.AllowGet);
+        //}
+        
         protected override void Dispose(bool disposing)
         {
             db.Dispose();
