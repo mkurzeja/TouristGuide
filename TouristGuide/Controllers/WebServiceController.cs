@@ -305,6 +305,7 @@ namespace TouristGuide.Controllers
 
         // GET: /WebService/AttractionsByUserList
         [WebMethod]
+        [HttpPost]
         [CheckTokkenFilter]
         public void AddPhotoToAttraction(string tokken, int attrId, byte[] image = null, int userId = 0)
         {
