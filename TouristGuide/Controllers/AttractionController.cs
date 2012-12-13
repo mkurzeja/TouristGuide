@@ -97,8 +97,10 @@ namespace TouristGuide.Controllers
             //attraction.Reviews = db.AttractionReview.Where(a => a.AttractionID == id).ToList();
             //attraction.Images = db.AttractionImage.Where(a => a.AttractionID == id).ToList();
 
-            var attraction = db.Attraction.Include(i => i.Images).Include(a => a.Address).Include(c => c.Coordinates)
+            var attraction = db.Attraction.Include(a => a.Address).Include(c => c.Coordinates)
                 .Include(c => c.Country).Include(c => c.AttractionType).Where(a => a.ID == id).SingleOrDefault();
+
+            ViewData["Images"] = db.AttractionImage.Where(a => a.AttractionID == id && a.isApproved == 1).ToList();
 
             ViewData["Reviews"] = db.AttractionReview.Where(a => a.AttractionID == id && a.isApproved == 1).OrderByDescending(x => x.Date)
                 .Take(num).ToList();

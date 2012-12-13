@@ -10,6 +10,9 @@
         $("#showreview").click(function () {
             $("#addreview").toggle();
         });
+        $("#showImage").click(function () {
+            $("#addImage").toggle();
+        });
         GetMap();
     });
 
@@ -98,10 +101,33 @@
 	<li><b>Street:</b> @Model.Address.Street @Model.Address.BuildingNumber</li>
 </ul>
 </div>
+
+<div id="addImage" style="display: none">
+		@using (Html.BeginForm("ImageCreate", "Attraction"))
+  {
+			@Html.ValidationSummary(true)
+			<fieldset>
+				<legend>Add Image</legend>  
+				    <div class="editor-field-images">
+                        <input type="file" name="photo" />
+                    </div>
+                    <input type="button" value=" + " onclick="addImgInput()" /><input type="button" value=" - " onclick="    delImgInput()" />
+			</fieldset>
+  }
+</div>
+
 				
 @if (Model.Images.Count() > 0)
 {
-	<h3>Images</h3>
+	<h3 style="display: inline-block; margin-right:20px;">Images</h3>
+    	if (Request.IsAuthenticated)
+     {
+		@:<a id="showImage">Add Image</a>
+	}
+     else
+     {
+		@Html.ActionLink("Log on to add image", "LogOn", "Account", new { returnUrl = Request.RawUrl }, null)
+     }
 	<div class="post-images">
 		<ul class="thumbs noscript">
 			@for (int i = 0; i < Model.Images.Count(); ++i)
@@ -110,6 +136,13 @@
 					<a class="thumb" href="@Url.Content("~/Content/AttractionImages/" + Model.Images[i].FileName)" title="Image #@i">
 						<img src="@Url.Content("~/Content/AttractionImages/" + Model.Images[i].FileName)" alt="Image #@i" />
 					</a>
+                    <p>
+                        <b>Title: </b>@Model.Images[i].Title
+                    </p>
+                    <p>
+                        <b>Author: </b>@Model.Images[i].Author
+                    </p>
+                    <br />
 				</li>
    }
 		</ul>

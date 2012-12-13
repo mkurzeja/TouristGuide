@@ -18,7 +18,13 @@ namespace TouristGuide.Models
 
         public int AttractionID { get; set; }
 
+        public Byte isApproved { get; set; }
+
         [Required]
         public string FileName { get; set; }
+
+        public string Author { get; set; }
+
+        public string Title { get; set; }
     }
 }
