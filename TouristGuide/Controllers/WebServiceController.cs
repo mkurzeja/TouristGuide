@@ -303,13 +303,19 @@ namespace TouristGuide.Controllers
             return Json(new { attractions = attractions }, JsonRequestBehavior.AllowGet);
         }
 
-        // GET: /WebService/AttractionsByUserList
+        // GET: /WebService/AddPhotoToAttraction
         [WebMethod]
         [HttpPost]
         [CheckTokkenFilter]
-        public void AddPhotoToAttraction(string tokken, int attrId, byte[] image = null, int userId = 0)
+        public JsonResult AddPhotoToAttraction(string tokken, int attrId, int userId = 0)
         {
             //check user role for permission??
+
+            byte[] image = new byte[Request.InputStream.Length];
+            Request.InputStream.Read(image, 0, image.Length);
+
+            if(Request.InputStream.Length==0)
+                return Json("false", JsonRequestBehavior.AllowGet);
 
             MemoryStream ms = new MemoryStream(image);
             Bitmap bitmap = new Bitmap(ms);
@@ -320,6 +326,8 @@ namespace TouristGuide.Controllers
             var ati = new AttractionImage() { AttractionID = attrId, FileName = name + ".jpg" };
             db.AttractionImage.Add(ati);
             db.SaveChanges();
+
+            return Json("true", JsonRequestBehavior.AllowGet);
         }
 
         // GET: /WebService/AttractionsByUserList
