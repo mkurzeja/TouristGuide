@@ -28,6 +28,8 @@ namespace TouristGuide.Controllers
 
             
             Attraction[] atTab = new Attraction[attractions.Count];
+            if (attractions.Count == 0)
+                return "";
             atTab = attractions.ToArray();
             double[,] distances = new double[atTab.Length, atTab.Length];
 

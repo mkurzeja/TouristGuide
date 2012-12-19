@@ -20,8 +20,13 @@
             url: encodeURI('@Url.Action("GetPoints", "ShortestPath")'),
             data: { id: ListID}
         }).done(function (msg) {
-            que = msg;
-            GetMap();
+         
+            if (msg != "")
+            {
+                
+                que = msg;
+                GetMap();
+            }
         });
         
     }
@@ -75,12 +80,15 @@
     {
         // Initialize the map
         // Initialize the map
+        @if(Model.Count() > 0)
+        {
+            <text>
         map = new Microsoft.Maps.Map(document.getElementById("mapDiv"),{credentials:"Ai27_Zub6XP-KHKhEVbkfI-I7ExrDptEkbTJVWD_2q-QFhpue7qM_j8NRO5msIYm", 
             mapTypeId: Microsoft.Maps.MapTypeId.road, showDashboard:false,
             showScalebar:false,
             location:new Microsoft.Maps.Location(@Model.ElementAt(0).Coordinates.Latitude, @Model.ElementAt(0).Coordinates.Longitude)
-        }); 
-       
+        }); </text>
+        }
         dataLayer = new Microsoft.Maps.EntityCollection();
         map.entities.push(dataLayer);
         var infoboxLayer = new Microsoft.Maps.EntityCollection();
