@@ -112,22 +112,25 @@
                         <input type="file" name="photo" />
                     </div>
                     <input type="button" value=" + " onclick="addImgInput()" /><input type="button" value=" - " onclick="    delImgInput()" />
+                    <br />
+                <input type="submit" value="Send!" />
 			</fieldset>
   }
 </div>
-
-				
-@if (Model.Images.Count() > 0)
-{
-	<h3 style="display: inline-block; margin-right:20px;">Images</h3>
-    	if (Request.IsAuthenticated)
+@if (Request.IsAuthenticated)
      {
-		@:<a id="showImage">Add Image</a>
+		@:<a id="showImage">Add Image</a><br />
 	}
      else
      {
 		@Html.ActionLink("Log on to add image", "LogOn", "Account", new { returnUrl = Request.RawUrl }, null)
+        <br />
      }
+				
+@if (Model.Images.Count() > 0)
+{
+	<h3 style="display: inline-block; margin-right:20px;">Images</h3>
+    	
 	<div class="post-images">
 		<ul class="thumbs noscript">
 			@for (int i = 0; i < Model.Images.Count(); ++i)
