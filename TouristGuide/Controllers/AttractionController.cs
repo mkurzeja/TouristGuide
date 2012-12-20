@@ -386,6 +386,58 @@ namespace TouristGuide.Controllers
 
         #endregion
 
+        [Authorize]
+        [HttpPost]
+        public ActionResult ImageCreate(int AttractionId, String Author, String FileName, String Title)
+        {
+            AttractionImage image = new AttractionImage();
+
+            image.AttractionID = AttractionId;
+            image.isApproved = 0;
+            image.Author = Author;
+            image.Title = Title;
+
+            try
+            {
+                int i = 0;
+                foreach (string upload in Request.Files)
+                {
+                    if (Request.Files[i].ContentLength == 0)
+                        continue;
+                    string path = AppDomain.CurrentDomain.BaseDirectory + "Content/AttractionImages/";
+                    string ext = Request.Files[i].FileName.Substring(Request.Files[i].FileName.LastIndexOf('.'));
+                    image.FileName = generateRandomString(32) + ext;
+                    System.Diagnostics.Debug.WriteLine(image.FileName);
+                    Request.Files[i].SaveAs(Path.Combine(path, image.FileName));
+                    i++;
+                }
+            }
+            catch (NullReferenceException)
+            {
+                //no photo
+            }
+
+            db.AttractionImage.Add(image);
+            db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = image.AttractionID });
+            //return View("GetImage", image);
+        }
+        private void writeToFile(string strPath, ref byte[] Buffer)
+        {
+            // Create a file
+
+            FileStream newFile = new FileStream(strPath, FileMode.Create);
+
+            // Write data to the file
+
+            newFile.Write(Buffer, 0, Buffer.Length);
+
+            // Close file
+
+            newFile.Close();
+        }
+
         #region Helpers
 
         protected override void Dispose(bool disposing)

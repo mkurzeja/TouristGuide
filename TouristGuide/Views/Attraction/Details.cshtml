@@ -11,10 +11,19 @@
             $("#addreview").toggle();
         });
         $("#showImage").click(function () {
-            $("#addImage").toggle();
+            $("#addImageDiv").toggle();
         });
         GetMap();
     });
+
+    function AddImage(){
+        ResultImage();
+        setTimeout("document.getElementById('addImage').submit()", 1000);
+    }
+    function ResultImage() {
+            $("#addImageDiv").toggle();
+            $('#showImage').after("<br/><p style='color:red'>Your image must be approved.</p>");
+    }
 
     function AddReview() {
         AttractionId = $("#AttractionID").val();
@@ -102,18 +111,27 @@
 </ul>
 </div>
 
-<div id="addImage" style="display: none">
-		@using (Html.BeginForm("ImageCreate", "Attraction"))
+<div id="addImageDiv" style="display: none">
+		@using (Html.BeginForm("ImageCreate", "Attraction", FormMethod.Post, new { enctype = "multipart/form-data", id =  "addImage",
+                                onsubmit = "AddImage()"}))
   {
 			@Html.ValidationSummary(true)
 			<fieldset>
-				<legend>Add Image</legend>  
+				<legend>Add Image</legend>
+                @Html.Hidden("Author", Context.User.Identity.Name)
+				@Html.Hidden("AttractionID", Model.ID)  
 				    <div class="editor-field-images">
-                        <input type="file" name="photo" />
+                        <input type="file" name="FileName" id="FileName"/>
                     </div>
-                    <input type="button" value=" + " onclick="addImgInput()" /><input type="button" value=" - " onclick="    delImgInput()" />
+                    <div class="editor-label">
+					    Title
+				    </div>
+                    <div class="editor-field-images">
+                        <input type="text" id="Title" name="Title" />
+                    </div>
+                    <!--input type="button" value=" + " onclick="addImgInput()" /><input type="button" value=" - " onclick="    delImgInput()" /-->
                     <br />
-                <input type="submit" value="Send!" />
+                <input type="button" value="Send!" onclick="AddImage()"/>
 			</fieldset>
   }
 </div>
