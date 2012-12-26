@@ -240,6 +240,41 @@ namespace TouristGuide.Controllers
             return Json(new { attractions = attractions.ToList() }, JsonRequestBehavior.AllowGet);
         }
 
+        [WebMethod]
+        public JsonResult RegisterUser(string username, string pass, string email)
+        {
+            MembershipCreateStatus createStatus;
+            Membership.CreateUser(username, pass, email, null, null, true, null, out createStatus);
+            System.Web.Security.Roles.AddUserToRole(username, "user");
+            if (createStatus == MembershipCreateStatus.Success)
+            {
+                var tokken = GenerateToken(username);
+                return Json(tokken, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json("error", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        private String GenerateToken(string user)
+        {
+            String tokken = "";
+
+            var id = users.GetUserByLogin(user).UserId;
+            tokken = HashHelper.CalculateMD5Hash(id.ToString() + DateTime.Now.Ticks.ToString());
+            var el = new UserTokken() { Tokken = tokken, UserId = id, LastAccessTime = DateTime.Now };
+
+            var del = db.UserTokkens.SingleOrDefault(x => x.UserId == id);
+            if (del != null)
+                db.UserTokkens.Remove(del);
+
+            db.UserTokkens.Add(el);
+            db.SaveChanges();
+
+            return tokken;
+        }
+
         // GET: /WebService/MobileLogOn
         [WebMethod]
         public JsonResult MobileLogOn(string user, string pass)
@@ -248,16 +283,7 @@ namespace TouristGuide.Controllers
 
             if (Membership.ValidateUser(user, pass))
             {
-                var id = users.GetUserByLogin(user).UserId;
-                tokken = HashHelper.CalculateMD5Hash(id.ToString() + DateTime.Now.Ticks.ToString());
-                var el = new UserTokken() { Tokken = tokken, UserId = id, LastAccessTime = DateTime.Now };
-
-                var del = db.UserTokkens.SingleOrDefault(x=>x.UserId==id);
-                if (del != null)
-                    db.UserTokkens.Remove(del);
-
-                db.UserTokkens.Add(el);
-                db.SaveChanges();
+                tokken = GenerateToken(user);
             }
             else
             {
