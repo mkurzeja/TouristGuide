@@ -81,7 +81,41 @@
             <input type="submit" value="Save" onclick="UpdateText()" />
         </p>
 }
+@if (Model.imgUrl != null && Model.imgUrl!="")
+{
+	<h3 style="display: inline-block; margin-right:20px;">Images</h3>
+    	
+	<div class="post-images">
+		<ul class="thumbs noscript">
+	
+				<li>
+					<a class="thumb" href="@Url.Content("~/" + Model.imgUrl)" title="Image 1">
+						<img src="@Url.Content("~/" + Model.imgUrl)" alt="Image 1" />
+					</a>
+				</li>
+   
+		</ul>
+        @Html.ActionLink("Delete", "removeImage", new { PlaceID = Model.ID })
+	</div>
+}
 
+<div id="addImageDiv">
+		@using (Html.BeginForm("ImageCreate", "Place", FormMethod.Post, new { enctype = "multipart/form-data", id =  "addImage",
+                                onsubmit = "AddImage()"}))
+  {
+			@Html.ValidationSummary(true)
+			<fieldset>
+				<legend>Add Image</legend>
+                @Html.Hidden("PlaceID", Model.ID)  
+				    <div class="editor-field-images">
+                        <input type="file" name="FileName" id="FileName"/>
+                    </div>
+                    
+                    <br />
+                <input type="submit" value="Send!" />
+			</fieldset>
+  }
+</div>
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>

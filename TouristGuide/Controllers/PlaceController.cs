@@ -8,7 +8,9 @@ using System.Web.Mvc;
 using TouristGuide.Models;
 using TouristGuide.Helpers;
 using System.Text.RegularExpressions;
-
+using System.IO;
+using System.Data.Entity.Validation;
+using System.Diagnostics;
 namespace TouristGuide.Controllers
 { 
     public class PlaceController : Controller
@@ -172,6 +174,76 @@ namespace TouristGuide.Controllers
         {
             db.Dispose();
             base.Dispose(disposing);
+        }
+        [Authorize]
+        public ActionResult removeImage(int PlaceID)
+        {
+
+
+            string path = AppDomain.CurrentDomain.BaseDirectory;
+
+            Place us = db.Place.Where(x => x.ID == PlaceID).Include("Coordinates").Include("Country").Single();
+            System.IO.File.Delete(Path.Combine(path, us.imgUrl));
+
+            us.imgUrl = "";
+            db.Entry(us).State = System.Data.EntityState.Modified;
+            db.SaveChanges();
+            return RedirectToAction("Edit", new { id = us.ID });
+        }
+        [Authorize]
+        [HttpPost]
+        public ActionResult ImageCreate(int PlaceID)
+        {
+            Place us = db.Place.Where(x => x.ID == PlaceID).Include("Coordinates").Include("Country").Single();
+            if (us.imgUrl != null && us.imgUrl != "")
+            {
+                string path = AppDomain.CurrentDomain.BaseDirectory;
+                System.IO.File.Delete(Path.Combine(path, us.imgUrl));
+            }
+            string FileName = "";
+            try
+            {
+                string path = AppDomain.CurrentDomain.BaseDirectory + "Content/PlacesImages/";
+                string ext = Request.Files[0].FileName.Substring(Request.Files[0].FileName.LastIndexOf('.'));
+                FileName = generateRandomString(32) + ext;
+                System.Diagnostics.Debug.WriteLine(FileName);
+                Request.Files[0].SaveAs(Path.Combine(path, FileName));
+                FileName = Path.Combine("Content/PlacesImages/", FileName);
+
+
+            }
+            catch (NullReferenceException)
+            {
+                //no photo
+            }
+
+            us.imgUrl = FileName;
+            db.Entry(us).State = System.Data.EntityState.Modified;
+            db.SaveChanges();
+  
+            return RedirectToAction("Edit", new { id = us.ID });
+        }
+
+        public String generateRandomString(int length)
+        {
+            //Initiate objects & vars    
+            Random random = new Random();
+            String randomString = "";
+            int randNumber;
+
+            //Loop ‘length’ times to generate a random number or character
+            for (int i = 0; i < length; i++)
+            {
+                if (random.Next(1, 3) == 1)
+                    randNumber = random.Next(97, 123); //char {a-z}
+                else
+                    randNumber = random.Next(48, 58); //int {0-9}
+
+                //append random char or digit to random string
+                randomString = randomString + (char)randNumber;
+            }
+            //return the random string
+            return randomString;
         }
     }
 }

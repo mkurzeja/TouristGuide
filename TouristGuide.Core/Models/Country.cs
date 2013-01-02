@@ -10,7 +10,7 @@ namespace TouristGuide.Core.Models
     public class Country
     {
         public int ID { get; set; }
-
+        public string imgUrl { get; set; }
         [Required]
         public string Name { get; set; }
 
