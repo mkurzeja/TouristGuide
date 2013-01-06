@@ -13,6 +13,10 @@
         $("#showImage").click(function () {
             $("#addImageDiv").toggle();
         });
+        
+        $(".fancybox").fancybox();
+        
+
         GetMap();
     });
 
@@ -137,7 +141,7 @@
 </div>
 @if (Request.IsAuthenticated)
      {
-		@:<a id="showImage">Add Image</a><br />
+		@:<a id="showImage" style="cursor: pointer;">Add Image</a><br />
 	}
      else
      {
@@ -148,13 +152,14 @@
 @if (Model.Images.Count() > 0)
 {
 	<h3 style="display: inline-block; margin-right:20px;">Images</h3>
-    	
+    <link rel="stylesheet" href="@Url.Content("~/Content/fancybox/jquery.fancybox-1.3.4.css")" type="text/css" media="screen" />
+    <script type="text/javascript" src="@Url.Content("~/Content/fancybox/jquery.fancybox-1.3.4.pack.js")"></script>
 	<div class="post-images">
 		<ul class="thumbs noscript">
 			@for (int i = 0; i < Model.Images.Count(); ++i)
    {   
 				<li>
-					<a class="thumb" href="@Url.Content("~/Content/AttractionImages/" + Model.Images[i].FileName)" title="Image #@i">
+					<a class="fancybox" rel="group" href="@Url.Content("~/Content/AttractionImages/" + Model.Images[i].FileName)" title="@Model.Images[i].Title">
 						<img src="@Url.Content("~/Content/AttractionImages/" + Model.Images[i].FileName)" alt="Image #@i" />
 					</a>
                     <p>
@@ -168,6 +173,7 @@
    }
 		</ul>
 	</div>
+
 }
 @if (Model.Video != null)
 {
