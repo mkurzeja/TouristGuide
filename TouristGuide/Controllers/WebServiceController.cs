@@ -15,7 +15,7 @@ using System.IO;
 using System.Drawing;
 
 namespace TouristGuide.Controllers
-{ 
+{
     [WebService]
     public class WebServiceController : Controller
     {
@@ -26,18 +26,18 @@ namespace TouristGuide.Controllers
         [WebMethod]
         public JsonResult GetAttractions(string place, int start, int count)
         {
-            var attractions =  db.Attraction.Include(c => c.Coordinates).Include(c => c.Country).Include(a => a.Address);
+            var attractions = db.Attraction.Include(c => c.Coordinates).Include(c => c.Country).Include(a => a.Address);
 
-            if(place!=null)
+            if (place != null)
             {
-                attractions =  attractions.Where(p => p.Address.City == place || p.Address.Region == place);
+                attractions = attractions.Where(p => p.Address.City == place || p.Address.Region == place);
             }
 
-            var attrs = attractions.OrderByDescending(x=>x.AvgRating).Skip(start).Take(count).Select(x => new
+            var attrs = attractions.OrderByDescending(x => x.AvgRating).Skip(start).Take(count).Select(x => new
             {
                 ID = x.ID,
                 Name = x.Name,
-                AvgRating = x.AvgRating.HasValue ? Math.Round(x.AvgRating.Value,2) : 0.0
+                AvgRating = x.AvgRating.HasValue ? Math.Round(x.AvgRating.Value, 2) : 0.0
             });
 
             return Json(new { attractions = attrs.ToList() }, JsonRequestBehavior.AllowGet);
@@ -73,9 +73,41 @@ namespace TouristGuide.Controllers
         {
             var attraction = db.Attraction.Include(a => a.Address).Include(i => i.Images).Include(c => c.Coordinates).Include(r => r.Reviews)
                 .Where(x => x.ID == id).SingleOrDefault();
+
+            if (attraction == null)
+                return null;
+
             attraction.Description = Regex.Replace(attraction.Description, @"<.*?>", string.Empty);
+            attraction.Images.ForEach(x =>
+            {
+                var s1 = Url.Action("Index", "Home", null, "http");
+                String path = s1 + "Content/AttractionImages";
+                x.FileName = path + "/" + x.FileName;
+            });
             //return Json(attraction, JsonRequestBehavior.AllowGet);
             return Json(new { attraction = attraction }, JsonRequestBehavior.AllowGet);
+        }
+
+         // GET: /WebService/GetAttractionsForMap/1;2
+        [WebMethod]
+        public JsonResult GetAttractionsForMap(String ids)
+        {
+            String[] ids1 = ids.Split(';');
+            List<int> ids2 = new List<int>();
+            ids1.ToList().ForEach(x =>
+                {
+                    int val = 0;
+                    Int32.TryParse(x, out val);
+                    ids2.Add(val);
+                });
+
+            var attractions = db.Attraction.Include(a => a.Address).Include(i => i.Images)
+                .Include(c => c.Coordinates).Include(r => r.Reviews)
+                .Where(x => ids2.Contains(x.ID)).Select(x => new { x.ID, x.Name, x.Coordinates.Latitude, x.Coordinates.Longitude }).ToList();
+            if (attractions == null)
+                return null;
+
+            return Json(new { attractions = attractions }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: /WebService/GetAttractions?name=Name
@@ -83,10 +115,28 @@ namespace TouristGuide.Controllers
         public JsonResult GetAttractionByName(string name)
         {
             var attraction = db.Attraction.Include(c => c.Country).Include(a => a.Address).
-                Where(x => x.Name == name).SingleOrDefault();
-            attraction.Description = Regex.Replace(attraction.Description, @"<.*?>", string.Empty);
-            //return Json(attraction, JsonRequestBehavior.AllowGet);
-            return Json(new { attraction = attraction }, JsonRequestBehavior.AllowGet);
+                FirstOrDefault(x => x.Name.Contains(name));
+
+            if (attraction != null)
+            {
+                attraction.Description = Regex.Replace(attraction.Description, @"<.*?>", string.Empty);
+                return Json(new { attraction = attraction }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json("empty", JsonRequestBehavior.AllowGet);
+        }
+        // GET: /WebService/GetAttractions?name=Name
+        [WebMethod]
+        public JsonResult GetAttractionsByName(string name)
+        {
+            var attractions = db.Attraction.Select(x => new { x.ID, x.Name }).Where(x => x.Name.Contains(name));
+
+            if (attractions != null)
+            {
+                return Json(new { attractions = attractions }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json("empty", JsonRequestBehavior.AllowGet);
         }
 
         // GET: /WebService/GetAttractionsByType
@@ -119,7 +169,7 @@ namespace TouristGuide.Controllers
         public JsonResult GetAttractionsByPlace(string name, int start, int count)
         {
             var attractions = db.Attraction.Include(c => c.Coordinates).Include(c => c.Country).Include(a => a.Address);
-            if (name!=null)
+            if (name != null)
             {
                 attractions = attractions.Where(p => p.Address.City == name || p.Address.Region == name);
             }
@@ -156,7 +206,7 @@ namespace TouristGuide.Controllers
 
         // GET: /WebService/GetAttractionsByPlaceId/3
         [WebMethod]
-        public JsonResult GetAttractionsByPlaceId(int start, int count, int id=-1)
+        public JsonResult GetAttractionsByPlaceId(int start, int count, int id = -1)
         {
             var attractions = db.Attraction.Include(x => x.Address);
             if (id != -1)
@@ -190,10 +240,10 @@ namespace TouristGuide.Controllers
         public JsonResult GetPlaces(string country, int start, int count)
         {
             var places = db.Place.Include(x => x.Country);
-            if(country!=null)
+            if (country != null)
                 places = places.Where(p => p.Country.Name == country);
             //return Json(places, JsonRequestBehavior.AllowGet);
-            var placs = places.OrderBy(x=>x.Name).Skip(start).Take(count).Select(x => new
+            var placs = places.OrderBy(x => x.Name).Skip(start).Take(count).Select(x => new
             {
                 ID = x.ID,
                 Name = x.Name
@@ -206,16 +256,23 @@ namespace TouristGuide.Controllers
         public JsonResult GetCountry(int id)
         {
             var country = db.Country.Find(id);
-            country.Description = Regex.Replace(country.Description, @"<.*?>", string.Empty);
-            //return Json(country, JsonRequestBehavior.AllowGet);
-            return Json(new { country = country }, JsonRequestBehavior.AllowGet);
+            if(country!=null)
+            {
+                country.Description = Regex.Replace(country.Description, @"<.*?>", string.Empty);
+                return Json(new { country = country }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { country = "Cannot find description!" }, JsonRequestBehavior.AllowGet);
+            }         
+
         }
 
         // GET: /WebService/GetCountries
         [WebMethod]
         public JsonResult GetCountries(int start, int count)
         {
-            var countries = db.Country.OrderBy(x=>x.Name).Skip(start).Take(count).Select(x => new
+            var countries = db.Country.OrderBy(x => x.Name).Skip(start).Take(count).Select(x => new
             {
                 ID = x.ID,
                 Name = x.Name
@@ -224,12 +281,26 @@ namespace TouristGuide.Controllers
             return Json(new { countries = countries.ToList() }, JsonRequestBehavior.AllowGet);
         }
 
+        // GET: /WebService/GetCountries
+        [WebMethod]
+        public JsonResult GetPlacesList(int start, int count)
+        {
+            var places = db.Place.OrderBy(x => x.Name).Skip(start).Take(count).Select(x => new
+            {
+                ID = x.ID,
+                Name = x.Name
+            });
+            //return Json(countries, JsonRequestBehavior.AllowGet);
+            return Json(new { places = places.ToList() }, JsonRequestBehavior.AllowGet);
+        }
+       
+
         // GET: /WebService/GetAttractionsByLatLng
         [WebMethod]
         public JsonResult GetAttractionsByLatLng(double lat, double lng)
         {
-            var attractions = db.Attraction.Include(c=>c.Coordinates)
-                .Where(x=>x.Coordinates.Latitude > lat-1 && x.Coordinates.Latitude < lat+1 && x.Coordinates.Longitude > lng-1 && x.Coordinates.Longitude < lng+1)
+            var attractions = db.Attraction.Include(c => c.Coordinates)
+                .Where(x => x.Coordinates.Latitude > lat - 1 && x.Coordinates.Latitude < lat + 1 && x.Coordinates.Longitude > lng - 1 && x.Coordinates.Longitude < lng + 1)
                 .OrderBy(x => x.AvgRating).Take(100).Select(x => new
             {
                 ID = x.ID,
@@ -240,6 +311,41 @@ namespace TouristGuide.Controllers
             return Json(new { attractions = attractions.ToList() }, JsonRequestBehavior.AllowGet);
         }
 
+        [WebMethod]
+        public JsonResult RegisterUser(string username, string pass, string email)
+        {
+            MembershipCreateStatus createStatus;
+            Membership.CreateUser(username, pass, email, null, null, true, null, out createStatus);
+            System.Web.Security.Roles.AddUserToRole(username, "user");
+            if (createStatus == MembershipCreateStatus.Success)
+            {
+                var tokken = GenerateToken(username);
+                return Json(tokken, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json("error", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        private String GenerateToken(string user)
+        {
+            String tokken = "";
+
+            var id = users.GetUserByLogin(user).UserId;
+            tokken = HashHelper.CalculateMD5Hash(id.ToString() + DateTime.Now.Ticks.ToString());
+            var el = new UserTokken() { Tokken = tokken, UserId = id, LastAccessTime = DateTime.Now };
+
+            var del = db.UserTokkens.SingleOrDefault(x => x.UserId == id);
+            if (del != null)
+                db.UserTokkens.Remove(del);
+
+            db.UserTokkens.Add(el);
+            db.SaveChanges();
+
+            return tokken;
+        }
+
         // GET: /WebService/MobileLogOn
         [WebMethod]
         public JsonResult MobileLogOn(string user, string pass)
@@ -248,16 +354,7 @@ namespace TouristGuide.Controllers
 
             if (Membership.ValidateUser(user, pass))
             {
-                var id = users.GetUserByLogin(user).UserId;
-                tokken = HashHelper.CalculateMD5Hash(id.ToString() + DateTime.Now.Ticks.ToString());
-                var el = new UserTokken() { Tokken = tokken, UserId = id, LastAccessTime = DateTime.Now };
-
-                var del = db.UserTokkens.SingleOrDefault(x=>x.UserId==id);
-                if (del != null)
-                    db.UserTokkens.Remove(del);
-
-                db.UserTokkens.Add(el);
-                db.SaveChanges();
+                tokken = GenerateToken(user);
             }
             else
             {
@@ -293,33 +390,41 @@ namespace TouristGuide.Controllers
         {
             var list = db.UserLists.SingleOrDefault(x => x.UserId == userId && x.ID == listId);
 
-            if(list==null)
+            if (list == null)
                 return Json(null, JsonRequestBehavior.AllowGet);
 
-            var attractionsIds = db.AttractionsLists.Where(x => x.ListId == listId).Select(x=>x.AttractionId).ToList();
+            var attractionsIds = db.AttractionsLists.Where(x => x.ListId == listId).Select(x => x.AttractionId).ToList();
             var attractions = db.Attraction.Include(c => c.Country).Include(a => a.Address).
                 Where(x => attractionsIds.Contains(x.ID)).ToList();
             attractions.ForEach(x => x.Description = Regex.Replace(x.Description, @"<.*?>", string.Empty));
             return Json(new { attractions = attractions }, JsonRequestBehavior.AllowGet);
         }
 
-        // GET: /WebService/AttractionsByUserList
+        // GET: /WebService/AddPhotoToAttraction
         [WebMethod]
         [HttpPost]
         [CheckTokkenFilter]
-        public void AddPhotoToAttraction(string tokken, int attrId, byte[] image = null, int userId = 0)
+        public JsonResult AddPhotoToAttraction(string tokken, int attrId, int userId = 0)
         {
             //check user role for permission??
+
+            byte[] image = new byte[Request.InputStream.Length];
+            Request.InputStream.Read(image, 0, image.Length);
+
+            if (Request.InputStream.Length == 0)
+                return Json("false", JsonRequestBehavior.AllowGet);
 
             MemoryStream ms = new MemoryStream(image);
             Bitmap bitmap = new Bitmap(ms);
             var name = HashHelper.CalculateMD5Hash(new Guid().ToString());
             String path = HttpContext.Server.MapPath("~/Content/AttractionImages");
-            bitmap.Save(path+"/"+name+".jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
+            bitmap.Save(path + "/" + name + ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
             var ati = new AttractionImage() { AttractionID = attrId, FileName = name + ".jpg" };
             db.AttractionImage.Add(ati);
             db.SaveChanges();
+
+            return Json("true", JsonRequestBehavior.AllowGet);
         }
 
         // GET: /WebService/AttractionsByUserList
@@ -332,7 +437,7 @@ namespace TouristGuide.Controllers
         //    bt.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
         //    return Json(new { photo = ms.ToArray() }, JsonRequestBehavior.AllowGet);
         //}
-        
+
         protected override void Dispose(bool disposing)
         {
             db.Dispose();

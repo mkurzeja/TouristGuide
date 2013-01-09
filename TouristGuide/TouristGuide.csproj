@@ -484,6 +484,7 @@
     <Content Include="Views\Moderation\ImageIndex.cshtml" />
     <Content Include="Views\Attraction\GetImage.cshtml" />
     <Content Include="Views\Moderation\ReviewIndex.cshtml" />
+    <None Include="Properties\PublishProfiles\Local.pubxml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
